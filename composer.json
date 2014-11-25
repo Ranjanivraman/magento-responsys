@@ -1,0 +1,14 @@
+{
+    "name": "thepasgroup/magento-responsys",
+    "type": "magento-module",
+    "description": "Integration with responsys",
+    "authors": [
+        {
+            "name": "Lyndon Hook",
+            "email": "lyndon@arkade.com.au"
+        }
+    ],
+    "require": {
+        "magento-hackathon/magento-composer-installer": "~2.0"
+    }
+}
