@@ -1,0 +1,8 @@
+# Responsys
+app/code/community/Pas/*    app/code/community/Pas/
+                            
+app/etc/modules/*           app/etc/modules/
+                            
+lib/Responsys/*             lib/Responsys/
+                            
+shell/*                     shell/
