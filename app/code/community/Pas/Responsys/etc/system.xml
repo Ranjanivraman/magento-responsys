@@ -126,7 +126,7 @@
                             <show_in_store>0</show_in_store>
                         </welcome_online>
                         <welcome_instore translate="label">
-                            <label>Welcome Online</label>
+                            <label>Welcome In Store</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
