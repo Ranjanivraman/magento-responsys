@@ -53,23 +53,25 @@ class Pas_Responsys_Model_Observer
     /**
      * customer_import_finish_before
      *
+     * Todo: Move to separate module.
+     *
      * @param Varien_Event_Observer $observer
      * @return Pas_Responsys_Model_Observer
      */
     public function importFinished(Varien_Event_Observer $observer)
     {
+	    /** @var Pas_Responsys_Model_Api $responsysApi */
+	    $responsysApi = Mage::getModel('responsys/api');
+
+	    // Don't run if module disabled
+	    if (!$responsysApi->getHelper()->isEnabled()) {
+		    return $this;
+	    }
+
         $attributeImport = $observer->getImportAttribute();
 
-        /** @var Pas_Responsys_Model_Api $responsysApi */
-        $responsysApi = Mage::getModel('responsys/api');
-
-        // Don't run if module disabled
-        if (!$responsysApi->getHelper()->isEnabled()) {
-            return $this;
-        }
-
         $responsysApi
-            ->syncCustomers($attributeImport, false)
+            ->syncCustomers($attributeImport, false, false) // Don't reset filter attribute until event fired
             ->sendWelcome($attributeImport, true);
 
         return $this;
