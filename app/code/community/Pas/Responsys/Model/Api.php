@@ -35,12 +35,15 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
 
     public function syncCustomers($attribute = null, $resetFlag = true)
     {
+	    // Get default sync attribute code if non given.
         if (!$attribute) {
             $attribute = $this->getHelper()->getSyncAttribute();
         }
 
+	    /** @var Mage_Customer_Model_Resource_Customer_Collection $collection */
         $collection = $this->getCustomerCollection($attribute);
 
+	    // Build data array to be sent to responsys.
         $records = array();
         foreach ($collection as $customer) {
             $data = $customer->toArray(
@@ -57,11 +60,17 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
             $records[] = $data;
         }
 
+	    // Don't execute API call if nothing to send.
+	    if(!count($records)) return $this;
+
         try {
             $this->_client->mergeListMembers(
                 $this->getHelper()->getInteractFolder(self::INTERACT_MEMBER),
                 $this->getHelper()->getInteractObject(self::INTERACT_MEMBER),
-                $records
+                $records,
+                true,
+                RESPONSYS_REPLACE_ALL,
+                $this->getHelper()->getResponsysKey()
             );
             $this->_syncProfileExtensions($collection);
         }
@@ -77,14 +86,17 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    public function sendWelcome($attribute = null, $resetFlag = true)
+    public function sendWelcome($attribute = null, $resetFlag = true, $online = true)
     {
+	    // Get default welcome attribute code if non given.
         if (!$attribute) {
             $attribute = $this->getHelper()->getWelcomeAttribute();
         }
 
+	    /** @var Mage_Customer_Model_Resource_Customer_Collection $collection */
         $collection = $this->getCustomerCollection($attribute);
 
+	    // Build data array to be sent to responsys.
         $emails = array();
         foreach ($collection as $customer) {
             if ($customer->hasEmail()) {
@@ -92,11 +104,17 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
             }
         }
 
+	    // Don't execute API call if nothing to send.
+	    if(!count($emails)) return $this;
+
+	    // Todo: Move in store event to separate module.
+	    $event = $online ? $this->getHelper()->getWelcomeOnlineEvent() : $this->getHelper()->getWelcomeInStoreEvent();
+
         try {
             $this->_client->triggerCustomEvent(
                 $this->getHelper()->getInteractFolder(self::INTERACT_WELCOME),
                 $this->getHelper()->getInteractObject(self::INTERACT_WELCOME),
-                $this->getHelper()->getWelcomeEvent(),
+                $event,
                 $emails
             );
         }
@@ -132,7 +150,7 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
     public function getCustomerCollection($filter)
     {
         if (!isset($this->_customers[$filter])) {
-            $key = $this->getHelper()->getResponsysKey();
+            $key = $this->getHelper()->getMagentoKey();
             $columns = $this->getHelper()->getMagentoColumns();
 
             $this->_customers[$filter] = Mage::getResourceModel('customer/customer_collection')
@@ -164,17 +182,22 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Sync  profile extension data for a collections of customers.
+     * Sync profile extension data for a collections of customers.
+     *
+     * Todo: Move to separate module.
      *
      * @param Varien_Data_Collection $collection
      * @return Pas_Responsys_Model_Api
      */
     protected function _syncProfileExtensions(Varien_Data_Collection $collection)
     {
+	    $responsysKey   = $this->getHelper()->getResponsysKey();
+	    $magentoKey     = $this->getHelper()->getMagentoKey();
+
         $urls = array();
         foreach ($collection as  $customer) {
             $urls[] = array(
-                'CUSTOMER_ID_' => $customer->getData($this->getHelper()->getResponsysKey()),
+	            $responsysKey => $customer->getData($magentoKey),
                 'RESET_URL' => $this->_getCustomerActivationLink($customer)
             );
         }
@@ -191,12 +214,13 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
     /**
      * Generates and returns a customer activation link.
      *
+     * Todo: Move to separate module.
+     *
      * @param Mage_Customer_Model_Customer $customer
      * @return string
      */
     protected function _getCustomerActivationLink(Mage_Customer_Model_Customer $customer)
     {
-        // Todo: Change to be dynamic.
         $attributeCheck = 'ali_welcome_email';
 
         $url = '';
