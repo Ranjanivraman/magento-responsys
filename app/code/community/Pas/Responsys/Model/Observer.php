@@ -11,7 +11,7 @@ class Pas_Responsys_Model_Observer
         /** @var Pas_Responsys_Model_Api $responsysApi */
         $responsysApi = Mage::getModel('responsys/api');
 
-        // Don't run if module disabled
+        // Don't run if module disabled.
         if (!$responsysApi->getHelper()->isEnabled()) {
             return $this;
         }
@@ -63,7 +63,7 @@ class Pas_Responsys_Model_Observer
 	    /** @var Pas_Responsys_Model_Api $responsysApi */
 	    $responsysApi = Mage::getModel('responsys/api');
 
-	    // Don't run if module disabled
+	    // Don't run if module disabled.
 	    if (!$responsysApi->getHelper()->isEnabled()) {
 		    return $this;
 	    }
@@ -71,8 +71,8 @@ class Pas_Responsys_Model_Observer
         $attributeImport = $observer->getImportAttribute();
 
         $responsysApi
-            ->syncCustomers($attributeImport, false, false) // Don't reset filter attribute until event fired
-            ->sendWelcome($attributeImport, true);
+            ->syncCustomers($attributeImport, false) // Don't reset filter attribute until event fired.
+            ->sendWelcome($attributeImport, true, false); // Send in store welcome event.
 
         return $this;
     }
