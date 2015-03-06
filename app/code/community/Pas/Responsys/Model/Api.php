@@ -8,6 +8,9 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
     const INTERACT_URL      = 2;
     const INTERACT_WELCOME  = 3;
 
+	const SYNC_LIMIT = 200;
+	const SEND_LIMIT = 2000;
+
     /**
      * @var Responsys_API
      */
@@ -64,15 +67,18 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
 	    if(!count($records)) return $this;
 
         try {
-            $this->_client->mergeListMembers(
-                $this->getHelper()->getInteractFolder(self::INTERACT_MEMBER),
-                $this->getHelper()->getInteractObject(self::INTERACT_MEMBER),
-                $records,
-                true,
-                RESPONSYS_REPLACE_ALL,
-                $this->getHelper()->getResponsysKey()
-            );
-            $this->_syncProfileExtensions($collection);
+	        // Todo: Turn this into a less memory hungry loop.
+	        foreach(array_chunk($records, self::SYNC_LIMIT) as $chunk) {
+		        $this->_client->mergeListMembers(
+			        $this->getHelper()->getInteractFolder(self::INTERACT_MEMBER),
+			        $this->getHelper()->getInteractObject(self::INTERACT_MEMBER),
+			        $chunk,
+			        true,
+			        RESPONSYS_REPLACE_ALL,
+			        $this->getHelper()->getResponsysKey()
+		        );
+		        $this->_syncProfileExtensions($collection);
+	        }
         }
         catch (Exception $e) {
             $this->getHelper()->log($e->getMessage());
@@ -111,12 +117,15 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
 	    $event = $online ? $this->getHelper()->getWelcomeOnlineEvent() : $this->getHelper()->getWelcomeInStoreEvent();
 
         try {
-            $this->_client->triggerCustomEvent(
-                $this->getHelper()->getInteractFolder(self::INTERACT_WELCOME),
-                $this->getHelper()->getInteractObject(self::INTERACT_WELCOME),
-                $event,
-                $emails
-            );
+	        // Todo: Turn this into a less memory hungry loop.
+	        foreach(array_chunk($emails, self::SEND_LIMIT) as $chunk) {
+		        $this->_client->triggerCustomEvent(
+			        $this->getHelper()->getInteractFolder(self::INTERACT_WELCOME),
+			        $this->getHelper()->getInteractObject(self::INTERACT_WELCOME),
+			        $event,
+			        $chunk
+		        );
+	        }
         }
         catch (Exception $e) {
             $this->getHelper()->log($e->getMessage());
