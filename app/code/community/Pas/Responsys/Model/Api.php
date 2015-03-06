@@ -77,6 +77,9 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
 			        RESPONSYS_REPLACE_ALL,
 			        $this->getHelper()->getResponsysKey()
 		        );
+		        $this->getHelper()->log('Synced member data for ' . count($chunk) . ' customer.');
+
+		        // Update profile data.
 		        $this->_syncProfileExtensions($collection);
 	        }
         }
@@ -125,6 +128,7 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
 			        $event,
 			        $chunk
 		        );
+		        $this->getHelper()->log('Triggered `' . $event . '` event for ' . count($chunk) . ' customer.');
 	        }
         }
         catch (Exception $e) {
@@ -211,11 +215,21 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
             );
         }
 
-        $this->_client->mergeIntoProfileExtension(
-            $this->getHelper()->getInteractFolder(self::INTERACT_URL),
-            $this->getHelper()->getInteractObject(self::INTERACT_URL),
-            $urls
-        );
+	    try {
+		    // Todo: Turn this into a less memory hungry loop.
+		    foreach(array_chunk($urls, self::SYNC_LIMIT) as $chunk) {
+			    $this->_client->mergeIntoProfileExtension(
+				    $this->getHelper()->getInteractFolder(self::INTERACT_URL),
+				    $this->getHelper()->getInteractObject(self::INTERACT_URL),
+				    $chunk
+			    );
+			    $this->getHelper()->log('Synced profile data for ' . count($chunk) . ' customer.');
+		    }
+	    }
+	    catch (Exception $e) {
+		    $this->getHelper()->log($e->getMessage());
+		    return $this;
+	    }
 
         return $this;
     }
