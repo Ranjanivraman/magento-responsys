@@ -60,13 +60,13 @@ class Pas_Responsys_Model_Observer
      */
     public function importFinished(Varien_Event_Observer $observer)
     {
-	    /** @var Pas_Responsys_Model_Api $responsysApi */
-	    $responsysApi = Mage::getModel('responsys/api');
+        /** @var Pas_Responsys_Model_Api $responsysApi */
+        $responsysApi = Mage::getModel('responsys/api');
 
-	    // Don't run if module disabled.
-	    if (!$responsysApi->getHelper()->isEnabled()) {
-		    return $this;
-	    }
+        // Don't run if module disabled.
+        if (!$responsysApi->getHelper()->isEnabled()) {
+            return $this;
+        }
 
         $attributeImport = $observer->getImportAttribute();
 

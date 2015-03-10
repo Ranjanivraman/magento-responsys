@@ -8,8 +8,8 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
     const INTERACT_URL      = 2;
     const INTERACT_WELCOME  = 3;
 
-	const SYNC_LIMIT = 200;
-	const SEND_LIMIT = 2000;
+    const SYNC_LIMIT = 200;
+    const SEND_LIMIT = 2000;
 
     /**
      * @var Responsys_API
@@ -38,15 +38,15 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
 
     public function syncCustomers($attribute = null, $resetFlag = true)
     {
-	    // Get default sync attribute code if non given.
+        // Get default sync attribute code if non given.
         if (!$attribute) {
             $attribute = $this->getHelper()->getSyncAttribute();
         }
 
-	    /** @var Mage_Customer_Model_Resource_Customer_Collection $collection */
+        /** @var Mage_Customer_Model_Resource_Customer_Collection $collection */
         $collection = $this->getCustomerCollection($attribute);
 
-	    // Build data array to be sent to responsys.
+        // Build data array to be sent to responsys.
         $records = array();
         foreach ($collection as $customer) {
             $data = $customer->toArray(
@@ -63,25 +63,25 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
             $records[] = $data;
         }
 
-	    // Don't execute API call if nothing to send.
-	    if(!count($records)) return $this;
+        // Don't execute API call if nothing to send.
+        if(!count($records)) return $this;
 
         try {
-	        // Todo: Turn this into a less memory hungry loop.
-	        foreach(array_chunk($records, self::SYNC_LIMIT) as $chunk) {
-		        $this->_client->mergeListMembers(
-			        $this->getHelper()->getInteractFolder(self::INTERACT_MEMBER),
-			        $this->getHelper()->getInteractObject(self::INTERACT_MEMBER),
-			        $chunk,
-			        true,
-			        RESPONSYS_REPLACE_ALL,
-			        $this->getHelper()->getResponsysKey()
-		        );
-		        $this->getHelper()->log('Synced member data for ' . count($chunk) . ' customer.');
+            // Todo: Turn this into a less memory hungry loop.
+            foreach(array_chunk($records, self::SYNC_LIMIT) as $chunk) {
+                $this->_client->mergeListMembers(
+                    $this->getHelper()->getInteractFolder(self::INTERACT_MEMBER),
+                    $this->getHelper()->getInteractObject(self::INTERACT_MEMBER),
+                    $chunk,
+                    true,
+                    RESPONSYS_REPLACE_ALL,
+                    $this->getHelper()->getResponsysKey()
+                );
+                $this->getHelper()->log('Synced member data for ' . count($chunk) . ' customer.');
 
-		        // Update profile data.
-		        $this->_syncProfileExtensions($collection);
-	        }
+                // Update profile data.
+                $this->_syncProfileExtensions($collection);
+            }
         }
         catch (Exception $e) {
             $this->getHelper()->log($e->getMessage());
@@ -97,15 +97,15 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
 
     public function sendWelcome($attribute = null, $resetFlag = true, $online = true)
     {
-	    // Get default welcome attribute code if non given.
+        // Get default welcome attribute code if non given.
         if (!$attribute) {
             $attribute = $this->getHelper()->getWelcomeAttribute();
         }
 
-	    /** @var Mage_Customer_Model_Resource_Customer_Collection $collection */
+        /** @var Mage_Customer_Model_Resource_Customer_Collection $collection */
         $collection = $this->getCustomerCollection($attribute);
 
-	    // Build data array to be sent to responsys.
+        // Build data array to be sent to responsys.
         $emails = array();
         foreach ($collection as $customer) {
             if ($customer->hasEmail()) {
@@ -113,23 +113,23 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
             }
         }
 
-	    // Don't execute API call if nothing to send.
-	    if(!count($emails)) return $this;
+        // Don't execute API call if nothing to send.
+        if(!count($emails)) return $this;
 
-	    // Todo: Move in store event to separate module.
-	    $event = $online ? $this->getHelper()->getWelcomeOnlineEvent() : $this->getHelper()->getWelcomeInStoreEvent();
+        // Todo: Move in store event to separate module.
+        $event = $online ? $this->getHelper()->getWelcomeOnlineEvent() : $this->getHelper()->getWelcomeInStoreEvent();
 
         try {
-	        // Todo: Turn this into a less memory hungry loop.
-	        foreach(array_chunk($emails, self::SEND_LIMIT) as $chunk) {
-		        $this->_client->triggerCustomEvent(
-			        $this->getHelper()->getInteractFolder(self::INTERACT_WELCOME),
-			        $this->getHelper()->getInteractObject(self::INTERACT_WELCOME),
-			        $event,
-			        $chunk
-		        );
-		        $this->getHelper()->log('Triggered `' . $event . '` event for ' . count($chunk) . ' customer.');
-	        }
+            // Todo: Turn this into a less memory hungry loop.
+            foreach(array_chunk($emails, self::SEND_LIMIT) as $chunk) {
+                $this->_client->triggerCustomEvent(
+                    $this->getHelper()->getInteractFolder(self::INTERACT_WELCOME),
+                    $this->getHelper()->getInteractObject(self::INTERACT_WELCOME),
+                    $event,
+                    $chunk
+                );
+                $this->getHelper()->log('Triggered `' . $event . '` event for ' . count($chunk) . ' customer.');
+            }
         }
         catch (Exception $e) {
             $this->getHelper()->log($e->getMessage());
@@ -204,32 +204,32 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
      */
     protected function _syncProfileExtensions(Varien_Data_Collection $collection)
     {
-	    $responsysKey   = $this->getHelper()->getResponsysKey();
-	    $magentoKey     = $this->getHelper()->getMagentoKey();
+        $responsysKey   = $this->getHelper()->getResponsysKey();
+        $magentoKey     = $this->getHelper()->getMagentoKey();
 
         $urls = array();
         foreach ($collection as  $customer) {
             $urls[] = array(
-	            $responsysKey => $customer->getData($magentoKey),
+                $responsysKey => $customer->getData($magentoKey),
                 'RESET_URL' => $this->_getCustomerActivationLink($customer)
             );
         }
 
-	    try {
-		    // Todo: Turn this into a less memory hungry loop.
-		    foreach(array_chunk($urls, self::SYNC_LIMIT) as $chunk) {
-			    $this->_client->mergeIntoProfileExtension(
-				    $this->getHelper()->getInteractFolder(self::INTERACT_URL),
-				    $this->getHelper()->getInteractObject(self::INTERACT_URL),
-				    $chunk
-			    );
-			    $this->getHelper()->log('Synced profile data for ' . count($chunk) . ' customer.');
-		    }
-	    }
-	    catch (Exception $e) {
-		    $this->getHelper()->log($e->getMessage());
-		    return $this;
-	    }
+        try {
+            // Todo: Turn this into a less memory hungry loop.
+            foreach(array_chunk($urls, self::SYNC_LIMIT) as $chunk) {
+                $this->_client->mergeIntoProfileExtension(
+                    $this->getHelper()->getInteractFolder(self::INTERACT_URL),
+                    $this->getHelper()->getInteractObject(self::INTERACT_URL),
+                    $chunk
+                );
+                $this->getHelper()->log('Synced profile data for ' . count($chunk) . ' customer.');
+            }
+        }
+        catch (Exception $e) {
+            $this->getHelper()->log($e->getMessage());
+            return $this;
+        }
 
         return $this;
     }
