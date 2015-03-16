@@ -15,7 +15,7 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
 
     public function sync($filter = null, $resetFlag = true)
     {
-        $filter = $filter ? $filter : Mage::helper('responsys/customer')->getWelcomeAttribute();
+        $filter = $filter ? $filter : Mage::helper('responsys/customer')->getSyncAttribute();
         $folder = Mage::helper('responsys/product')->getTableFolder();
         $table  = Mage::helper('responsys/product')->getTable();
 
