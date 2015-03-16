@@ -121,7 +121,7 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
     {
         foreach($this as $product) {
             $image = Mage::helper('catalog/image')->init($product, 'small_image')->resize(260, 347);
-            $product->setImage((string)$image);
+            $product->setSmallImage((string)$image);
         }
 
         return $this;
