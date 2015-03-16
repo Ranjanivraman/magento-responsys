@@ -10,11 +10,22 @@ class Mage_Shell_Responsys extends Mage_Shell_Abstract
     public function run()
     {
         try {
-            if ($this->getArg('sync')) {
-                Mage::getModel('responsys/api')->syncCustomers();
+            if ($arg = $this->getArg('sync')) {
+                switch ($arg) {
+                    case 'customers':
+                        Mage::getResourceModel('responsys/customer_collection')->sync();
+                        break;
+                    case 'products':
+                        Mage::getResourceModel('responsys/product_collection')->sync();
+                        break;
+                    default:
+                        Mage::getResourceModel('responsys/customer_collection')->sync();
+                        Mage::getResourceModel('responsys/product_collection')->sync();
+                        break;
+                }
             }
-            elseif ($this->getArg('welcome')) {
-                Mage::getModel('responsys/api')->sendWelcome();
+            elseif ($arg = $this->getArg('event')) {
+                Mage::getResourceModel('responsys/customer_collection')->event($arg);
             }
             else {
                 echo $this->usageHelp();
@@ -33,9 +44,9 @@ class Mage_Shell_Responsys extends Mage_Shell_Abstract
         return <<<USAGE
 Usage:  php -f responsys.php -- [options]
 
-  --sync            Sync new customer data with Responsys
-  --welcome         Trigger welcome event
-  help              This help
+  --sync    <entity>        Sync given data type with Responsys
+  --event   <event_name>    Trigger given event in Responsys
+  help                      This help
 
 USAGE;
     }

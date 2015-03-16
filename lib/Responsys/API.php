@@ -245,7 +245,7 @@ class Responsys_API
     }
 
     /**
-     * Insert new members or update existing member fields in a given List.
+     * Insert or update fields in a given Profile Extension.
      *
      * @param string $folder
      *   The folder which contains the list.
@@ -270,11 +270,6 @@ class Responsys_API
      *   to match on to determine if that record matches one
      *   in the $records array.
      *   Default is 'CUSTOMER_ID'
-     * @param string $match_column
-     *   A string whose value is the name of a field
-     *   to match on to determine if that record matches one
-     *   in the $records array.
-     *   Default is 'CUSTOMER_ID_'
      *
      * @return array
      * @throws ResponsysException
@@ -295,6 +290,49 @@ class Responsys_API
         $args->matchColumn = $match_column;
 
         $response = $this->callMethod('mergeIntoProfileExtension', $args);
+
+        if (is_object($response) && !empty($response->errorMessage)) {
+            throw new ResponsysException($response->errorMessage);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Insert or update fields in a given Table.
+     *
+     * @param string $folder
+     *   The folder which contains the list.
+     * @param string $table
+     *   The name of the table.
+     * @param array $records
+     *   A list of records to update. Each element in the array
+     *   represents a user and this is made up of an associative array
+     *   where the key is the field name and the value is the field
+     *   value.
+     * @param array $match_columns
+     *   A string whose value is the name of a field
+     *   to match on to determine if that record matches one
+     *   in the $records array.
+     *   Default is 'CUSTOMER_ID'
+     *
+     * @return array
+     * @throws ResponsysException
+     *
+     * @TODO: deal with larger than 200 situation.
+     */
+    public function mergeTableRecords($folder, $table, $records, $match_columns = array('PRODUCT_ID'))
+    {
+        $args = new stdClass();
+        $args->table = new stdClass();
+        $args->table->folderName = $folder;
+        $args->table->objectName = $table;
+
+        $args->recordData = $this->convertToResponsysList($records);
+
+        $args->matchColumnNames = $match_columns;
+
+        $response = $this->callMethod('MergeTableRecords', $args);
 
         if (is_object($response) && !empty($response->errorMessage)) {
             throw new ResponsysException($response->errorMessage);
