@@ -44,10 +44,7 @@ class Pas_Responsys_Model_Customer extends Mage_Customer_Model_Customer
      */
     public function sendNewAccountEmail($type = 'registered', $backUrl = '', $storeId = '0')
     {
-        /** @var Pas_Responsys_Model_Api $responsysApi */
-        $responsysApi = Mage::getModel('responsys/api');
-
-        if($type !== 'confirmation' && $responsysApi->getHelper()->isEnabled()) {
+        if($type !== 'confirmation' && Mage::helper('responsys')->isEnabled()) {
             Mage::dispatchEvent('responsys_new_customer', array('customer' => $this));
             return $this;
         }

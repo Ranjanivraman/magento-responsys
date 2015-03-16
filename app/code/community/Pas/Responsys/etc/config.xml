@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Pas_Responsys>
-            <version>0.2.3</version>
+            <version>0.3.0</version>
         </Pas_Responsys>
     </modules>
     <global>
@@ -27,6 +27,12 @@
                     <class>Pas_Responsys_Model_Resource_Customer_Setup</class>
                 </setup>
             </responsys_customer_setup>
+            <responsys_product_setup>
+                <setup>
+                    <module>Pas_Responsys</module>
+                    <class>Pas_Responsys_Model_Resource_Product_Setup</class>
+                </setup>
+            </responsys_product_setup>
         </resources>
         <helpers>
             <responsys>
@@ -39,10 +45,19 @@
                     <responsys>
                         <type>singleton</type>
                         <class>responsys/observer</class>
-                        <method>newCustomer</method>
+                        <method>flagCustomerSync</method>
                     </responsys>
                 </observers>
             </responsys_new_customer>
+            <catalog_product_save_before>
+                <observers>
+                    <responsys>
+                        <type>singleton</type>
+                        <class>responsys/observer</class>
+                        <method>flagProductSync</method>
+                    </responsys>
+                </observers>
+            </catalog_product_save_before>
             <customer_import_finish_before>
                 <observers>
                     <responsys>
@@ -56,15 +71,24 @@
     </global>
     <crontab>
         <jobs>
-            <responsys_cron>
+            <responsys_customer_cron>
                 <schedule>
                     <!-- Every 5 minutes -->
                     <cron_expr>*/5 * * * *</cron_expr>
                 </schedule>
                 <run>
-                    <model>responsys/observer::runCron</model>
+                    <model>responsys/observer::runCustomerCron</model>
                 </run>
-            </responsys_cron>
+            </responsys_customer_cron>
+            <responsys_product_cron>
+                <schedule>
+                    <!-- Every 4 hours -->
+                    <cron_expr>0 */4 * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>responsys/observer::runProductCron</model>
+                </run>
+            </responsys_product_cron>
         </jobs>
     </crontab>
 </config>

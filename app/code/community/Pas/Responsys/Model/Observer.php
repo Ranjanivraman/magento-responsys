@@ -2,23 +2,38 @@
 class Pas_Responsys_Model_Observer
 {
     /**
-     * Run defaults.
+     * Run customer sync.
      *
      * @return Pas_Responsys_Model_Observer
      */
-    public function runCron()
+    public function runCustomerCron()
     {
-        /** @var Pas_Responsys_Model_Api $responsysApi */
-        $responsysApi = Mage::getModel('responsys/api');
-
         // Don't run if module disabled.
-        if (!$responsysApi->getHelper()->isEnabled()) {
+        if (!Mage::helper('responsys')->isEnabled()) {
             return $this;
         }
 
-        $responsysApi
-            ->syncCustomers()
-            ->sendWelcome();
+        Mage::getResourceModel('responsys/customer_collection')
+            ->sync()
+            ->event('welcome');
+
+        return $this;
+    }
+
+    /**
+     * Run product sync.
+     *
+     * @return Pas_Responsys_Model_Observer
+     */
+    public function runProductCron()
+    {
+        // Don't run if module disabled.
+        if (!Mage::helper('responsys')->isEnabled()) {
+            return $this;
+        }
+
+        Mage::getResourceModel('responsys/product_collection')
+	        ->sync();
 
         return $this;
     }
@@ -29,23 +44,40 @@ class Pas_Responsys_Model_Observer
      * @param Varien_Event_Observer $observer
      * @return Pas_Responsys_Model_Observer
      */
-    public function newCustomer(Varien_Event_Observer $observer)
+    public function flagCustomerSync(Varien_Event_Observer $observer)
     {
         $customer = $observer->getCustomer();
+        $attributeSync = Mage::helper('responsys/customer')->getSyncAttribute();
+        $attributeWelcome = Mage::helper('responsys/customer')->getWelcomeAttribute();
+        Mage::helper('responsys/customer')
+            ->setFlag($customer, $attributeSync)
+            ->setFlag($customer, $attributeWelcome);
 
-        /** @var Pas_Responsys_Model_Api $responsysApi */
-        $responsysApi = Mage::getModel('responsys/api');
-
-        $attributeSync = $responsysApi->getHelper()->getSyncAttribute();
-        $attributeWelcome = $responsysApi->getHelper()->getWelcomeAttribute();
-
-        if($customer instanceof Mage_Customer_Model_Customer) {
-            $collection = new Varien_Data_Collection();
-            $collection->addItem($customer);
-            $responsysApi
-                ->setFlags($collection, $attributeSync, true)
-                ->setFlags($collection, $attributeWelcome, true);
+        // Don't run if module disabled.
+        if (!Mage::helper('responsys')->isEnabled()) {
+            return $this;
         }
+
+        // Instant sync of customer data instead of waiting for cron.
+        Mage::getResourceModel('responsys/customer_collection')
+            ->addAttributeToFilter('entity_id', array('eq' => $customer->getId()))
+            ->sync()
+            ->event('welcome');
+
+        return $this;
+    }
+
+    /**
+     * catalog_product_save_before
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Pas_Responsys_Model_Observer
+     */
+    public function flagProductSync(Varien_Event_Observer $observer)
+    {
+        $product = $observer->getProduct();
+        $attribute = Mage::helper('responsys/product')->getSyncAttribute();
+        Mage::helper('responsys/product')->setFlag($product, $attribute);
 
         return $this;
     }
@@ -60,19 +92,15 @@ class Pas_Responsys_Model_Observer
      */
     public function importFinished(Varien_Event_Observer $observer)
     {
-        /** @var Pas_Responsys_Model_Api $responsysApi */
-        $responsysApi = Mage::getModel('responsys/api');
-
         // Don't run if module disabled.
-        if (!$responsysApi->getHelper()->isEnabled()) {
+        if (!Mage::helper('responsys')->isEnabled()) {
             return $this;
         }
 
-        $attributeImport = $observer->getImportAttribute();
-
-        $responsysApi
-            ->syncCustomers($attributeImport, false) // Don't reset filter attribute until event fired.
-            ->sendWelcome($attributeImport, true, false); // Send in store welcome event.
+        $attribute = $observer->getImportAttribute();
+        Mage::getResourceModel('responsys/customer_collection')
+            ->sync($attribute, false)
+            ->event('instore_welcome', $attribute);
 
         return $this;
     }

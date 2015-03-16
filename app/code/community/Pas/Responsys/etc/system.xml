@@ -51,90 +51,116 @@
                         </api_password>
                     </fields>
                 </general>
-                <interact translate="label">
-                    <label>Interact</label>
+                <customers translate="label">
+                    <label>Customers</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>20</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <folder_member translate="label">
-                            <label>Member Folder</label>
+                        <list_folder translate="label">
+                            <label>List Folder</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </folder_member>
-                        <object_member translate="label">
-                            <label>Member Object</label>
+                        </list_folder>
+                        <list translate="label">
+                            <label>List</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </object_member>
-                        <folder_url translate="label">
-                            <label>URL Folder</label>
+                        </list>
+                        <extension_folder translate="label">
+                            <label>Extension Folder</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </folder_url>
-                        <object_url translate="label">
-                            <label>URL Object</label>
+                        </extension_folder>
+                        <extension translate="label">
+                            <label>Extension</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </object_url>
-                        <folder_welcome translate="label">
-                            <label>Welcome Folder</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </folder_welcome>
-                        <object_welcome translate="label">
-                            <label>Welcome Object</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </object_welcome>
+                        </extension>
                     </fields>
-                </interact>
-                <event>
-                    <label>Event</label>
+                </customers>
+                <products translate="label">
+                    <label>Products</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>30</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <welcome_online translate="label">
-                            <label>Welcome Online</label>
+                        <table_folder translate="label">
+                            <label>Table Folder</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </welcome_online>
-                        <welcome_instore translate="label">
+                        </table_folder>
+                        <table translate="label">
+                            <label>Table</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </table>
+                    </fields>
+                </products>
+                <events>
+                    <label>Events</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>40</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <list_folder_welcome translate="label">
+                            <label>Welcome List Folder</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </list_folder_welcome>
+                        <list_welcome translate="label">
+                            <label>Welcome List</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </list_welcome>
+                        <name_welcome translate="label">
+                            <label>Welcome</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </name_welcome>
+                        <name_instore_welcome translate="label">
                             <label>Welcome In Store</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>10</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </welcome_instore>
+                        </name_instore_welcome>
                     </fields>
-                </event>
+                </events>
             </groups>
         </responsys>
     </sections>
