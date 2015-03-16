@@ -51,7 +51,7 @@ class Pas_Responsys_Helper_Product extends Pas_Responsys_Helper_Abstract
             'PRODUCT_PRICE'     => 'price',
             'PRODUCT_DESC'      => 'description',
             'PRODUCT_LINK'      => 'url',
-            'PRODUCT_IMAGE'     => 'image'
+            'PRODUCT_IMAGE'     => 'small_image'
         );
     }
 
