@@ -25,7 +25,8 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
         // Load extra values.
         $this->_loadCategories()
             ->_loadLinks()
-            ->_loadImages();
+            ->_loadImages()
+            ->_formatPrices();
 
         // Collect all required product data.
         $records = array();
@@ -127,4 +128,18 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
 
         return $this;
     }
+
+	protected function _formatPrices()
+	{
+		foreach($this as $product) {
+			$price = Mage::getModel('directory/currency')->format(
+				$product->getPrice(),
+				array('display' => Zend_Currency::NO_SYMBOL),
+				false
+			);
+			$product->setPrice($price);
+		}
+
+		return $this;
+	}
 }
