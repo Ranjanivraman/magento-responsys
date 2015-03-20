@@ -33,7 +33,7 @@ class Pas_Responsys_Model_Observer
         }
 
         Mage::getResourceModel('responsys/product_collection')
-            ->sync();
+            ->sync(false); // Skip filter and sync all products
 
         return $this;
     }
