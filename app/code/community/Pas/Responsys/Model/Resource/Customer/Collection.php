@@ -15,7 +15,8 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
 
     public function sync($filter = null, $resetFlag = true)
     {
-        $filter = $filter ? $filter : Mage::helper('responsys/customer')->getSyncAttribute();
+	    // Load default filter
+        $filter = is_null($filter) ? Mage::helper('responsys/customer')->getSyncAttribute() : $filter;
         $folder = Mage::helper('responsys/customer')->getListFolder();
         $list   = Mage::helper('responsys/customer')->getList();
 
@@ -42,7 +43,7 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
         $this->_syncProfileExtensions();
 
         // If you want to reset the sync flag.
-        if($resetFlag) {
+        if($resetFlag && $this->_getFilter()) {
             Mage::helper('responsys/customer')->setFlags($this, $this->_getFilter(), false);
         }
 

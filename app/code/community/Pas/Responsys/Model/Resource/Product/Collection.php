@@ -15,7 +15,8 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
 
     public function sync($filter = null, $resetFlag = true)
     {
-        $filter = $filter ? $filter : Mage::helper('responsys/customer')->getSyncAttribute();
+	    // Load default filter
+        $filter = is_null($filter) ? Mage::helper('responsys/product')->getSyncAttribute() : $filter;
         $folder = Mage::helper('responsys/product')->getTableFolder();
         $table  = Mage::helper('responsys/product')->getTable();
 
@@ -45,7 +46,7 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
         Mage::getModel('responsys/api')->mergeTable($folder, $table, $records);
 
         // If you want to reset the sync flag.
-        if($resetFlag) {
+        if($resetFlag && $this->_getFilter()) {
             Mage::helper('responsys/product')->setFlags($this, $this->_getFilter(), false);
         }
 
