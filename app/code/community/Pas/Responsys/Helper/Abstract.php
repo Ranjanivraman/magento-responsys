@@ -10,6 +10,7 @@ class Pas_Responsys_Helper_Abstract extends Mage_Core_Helper_Abstract
     public function log($message)
     {
         Mage::log($message, null, 'responsys.log');
+
         return $this;
     }
 
@@ -40,8 +41,10 @@ class Pas_Responsys_Helper_Abstract extends Mage_Core_Helper_Abstract
      */
     public function setFlag(Mage_Core_Model_Abstract $object, $attribute, $value = true)
     {
-        $object->setData($attribute, $value);
-        $object->getResource()->saveAttribute($object, $attribute);
+        if(!$object->isObjectNew()) {
+            $object->setData($attribute, $value);
+            $object->getResource()->saveAttribute($object, $attribute);
+        }
 
         return $this;
     }

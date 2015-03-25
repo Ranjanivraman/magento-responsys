@@ -15,7 +15,7 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
 
     public function sync($filter = null, $resetFlag = true)
     {
-	    // Load default filter
+        // Load default filter
         $filter = is_null($filter) ? Mage::helper('responsys/product')->getSyncAttribute() : $filter;
         $folder = Mage::helper('responsys/product')->getTableFolder();
         $table  = Mage::helper('responsys/product')->getTable();
@@ -129,17 +129,17 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
         return $this;
     }
 
-	protected function _formatPrices()
-	{
-		foreach($this as $product) {
-			$price = Mage::getModel('directory/currency')->format(
-				$product->getPrice(),
-				array('display' => Zend_Currency::NO_SYMBOL),
-				false
-			);
-			$product->setPrice($price);
-		}
+    protected function _formatPrices()
+    {
+        foreach($this as $product) {
+            $price = Mage::getModel('directory/currency')->format(
+                $product->getPrice(),
+                array('display' => Zend_Currency::NO_SYMBOL),
+                false
+            );
+            $product->setPrice($price);
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 }
