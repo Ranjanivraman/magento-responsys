@@ -15,7 +15,7 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
 
     public function sync($filter = null, $resetFlag = true)
     {
-	    // Load default filter
+        // Load default filter
         $filter = is_null($filter) ? Mage::helper('responsys/customer')->getSyncAttribute() : $filter;
         $folder = Mage::helper('responsys/customer')->getListFolder();
         $list   = Mage::helper('responsys/customer')->getList();
@@ -125,7 +125,7 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
         $magentoKey     = Mage::helper('responsys/customer')->getMagentoKey();
 
         $records = array();
-        foreach ($this as $key => $customer) {
+        foreach($this as $key => $customer) {
             $records[$key] = array(
                 $responsysKey => $customer->getData($magentoKey),
                 'RESET_URL' => $this->_getCustomerActivationLink($customer)
@@ -150,7 +150,7 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
         $attributeCheck = 'ali_welcome_email';
 
         $url = '';
-        if ($customer->getData($attributeCheck) == true) {
+        if($customer->getData($attributeCheck) == true) {
             $newResetPasswordLinkToken = Mage::helper('customer')->generateResetPasswordLinkToken();
             $customer->changeResetPasswordLinkToken($newResetPasswordLinkToken);
 

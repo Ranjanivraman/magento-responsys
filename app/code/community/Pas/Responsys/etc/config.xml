@@ -49,7 +49,7 @@
                     </responsys>
                 </observers>
             </responsys_new_customer>
-            <catalog_product_save_before>
+            <catalog_product_save_after>
                 <observers>
                     <responsys>
                         <type>singleton</type>
@@ -57,7 +57,7 @@
                         <method>flagProductSync</method>
                     </responsys>
                 </observers>
-            </catalog_product_save_before>
+            </catalog_product_save_after>
             <customer_import_finish_before>
                 <observers>
                     <responsys>
