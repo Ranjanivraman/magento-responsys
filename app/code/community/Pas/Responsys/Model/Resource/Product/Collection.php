@@ -98,7 +98,9 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
                 ->addNameToResult()
                 ->addAttributeToSelect(array('level', 'children_count'))
                 ->addIdFilter($product->getCategoryIds())
+                // Get lowest level category.
                 ->addOrderField('level')
+                // If multiple on same level get one with most children.
                 ->addOrderField('children_count');
 
             $category = $categoryCollection->getLastItem();

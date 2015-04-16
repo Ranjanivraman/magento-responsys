@@ -93,7 +93,8 @@ class Pas_Responsys_Helper_Customer extends Pas_Responsys_Helper_Abstract
             $responsysKey       => $magentoKey,
             'EMAIL_ADDRESS_'    => 'email',
             'FIRST_NAME'        => 'firstname',
-            'LAST_NAME'         => 'lastname'
+            'LAST_NAME'         => 'lastname',
+            'SIGNUP_CC'         => 'country_code'
         );
     }
 

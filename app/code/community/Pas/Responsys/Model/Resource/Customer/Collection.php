@@ -22,6 +22,8 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
 
         $this->_setFilter($filter)->load();
 
+        $this->_loadCountryCodes();
+
         // Collect all required customer data.
         $records = array();
         foreach($this as $key => $customer) {
@@ -107,6 +109,17 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
         }
 
         return false;
+    }
+
+    protected function _loadCountryCodes()
+    {
+        foreach($this as $customer) {
+            $countryCode = Mage::app()->getWebsite($customer->getWebsiteId())
+                ->getConfig(Mage_Core_Helper_Data::XML_PATH_DEFAULT_COUNTRY);
+            $customer->setCountryCode($countryCode);
+        }
+
+        return $this;
     }
 
     /**
