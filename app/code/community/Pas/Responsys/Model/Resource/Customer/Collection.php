@@ -55,8 +55,8 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
     public function event($event, $filter = null, $resetFlag = true)
     {
         $filter = $filter ? $filter : Mage::helper('responsys/customer')->getWelcomeAttribute();
-        $folder = Mage::helper('responsys/customer')->getEventListFolder($event);
-        $list   = Mage::helper('responsys/customer')->getEventList($event);
+        $folder = Mage::helper('responsys/customer')->getEventListFolder();
+        $list   = Mage::helper('responsys/customer')->getEventList();
         $event  = Mage::helper('responsys/customer')->getEventName($event);
 
         $this->_setFilter($filter)->load();

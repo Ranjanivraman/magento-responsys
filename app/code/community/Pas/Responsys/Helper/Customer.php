@@ -12,8 +12,8 @@ class Pas_Responsys_Helper_Customer extends Pas_Responsys_Helper_Abstract
     /**
      * Event config values.
      */
-    const XML_PATH_RESPONSYS_EVENTS_LISTFOLDER  = 'responsys/events/list_folder_';
-    const XML_PATH_RESPONSYS_EVENTS_LIST        = 'responsys/events/list_';
+    const XML_PATH_RESPONSYS_EVENTS_LISTFOLDER  = 'responsys/events/list_folder_welcome';
+    const XML_PATH_RESPONSYS_EVENTS_LIST        = 'responsys/events/list_welcome';
     const XML_PATH_RESPONSYS_EVENTS_NAME        = 'responsys/events/name_';
 
     /**
@@ -43,15 +43,15 @@ class Pas_Responsys_Helper_Customer extends Pas_Responsys_Helper_Abstract
         return Mage::getStoreConfig(self::XML_PATH_RESPONSYS_CUSTOMERS_EXTENSION);
     }
 
-    public function getEventListFolder($event)
+    public function getEventListFolder()
     {
 
-        return Mage::getStoreConfig(self::XML_PATH_RESPONSYS_EVENTS_LISTFOLDER . strtolower($event));
+        return Mage::getStoreConfig(self::XML_PATH_RESPONSYS_EVENTS_LISTFOLDER);
     }
 
-    public function getEventList($event)
+    public function getEventList()
     {
-        return Mage::getStoreConfig(self::XML_PATH_RESPONSYS_EVENTS_LIST . strtolower($event));
+        return Mage::getStoreConfig(self::XML_PATH_RESPONSYS_EVENTS_LIST);
     }
 
     public function getEventName($event)
