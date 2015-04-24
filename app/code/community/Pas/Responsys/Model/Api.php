@@ -103,7 +103,6 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
             foreach(array_chunk($records, self::EVENT_LIMIT) as $chunk) {
                 $response = $this->_client->triggerCustomEvent($folder, $list, $event, $chunk, $primaryKey);
                 Mage::helper('responsys')->log('Triggered custom event `' . $event . '` for ' . count($chunk) . ' records.');
-                Mage::helper('responsys')->log(print_r($chunk, true));
 
                 // Check for errors.
                 if(!empty($response->errorMessage)) {
