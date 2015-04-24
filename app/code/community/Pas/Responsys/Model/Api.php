@@ -68,7 +68,7 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    public function mergeTable($folder, $table, array $records)
+    public function mergeTable($folder, $table, array $records, $primaryKey = 'PRODUCT_ID')
     {
         // Don't execute API call if nothing to send.
         if(!count($records)) return $this;
@@ -76,7 +76,7 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         try {
             // Todo: Turn this into a less memory hungry loop.
             foreach(array_chunk($records, self::MERGE_LIMIT) as $chunk) {
-                $response = $this->_client->mergeTableRecords($folder, $table, $chunk);
+                $response = $this->_client->mergeTableRecords($folder, $table, $chunk, array($primaryKey));
                 Mage::helper('responsys')->log('Merged table records for ' . count($chunk) . ' records.');
 
                 // Check for errors.
@@ -93,7 +93,7 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    public function triggerEvent($folder, $list, $event, array $records)
+    public function triggerEvent($folder, $list, $event, array $records, $primaryKey = 'CUSTOMER_ID')
     {
         // Don't execute API call if nothing to send.
         if(!count($records)) return $this;
@@ -101,8 +101,9 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         try {
             // Todo: Turn this into a less memory hungry loop.
             foreach(array_chunk($records, self::EVENT_LIMIT) as $chunk) {
-                $response = $this->_client->triggerCustomEvent($folder, $list, $event, $chunk);
+                $response = $this->_client->triggerCustomEvent($folder, $list, $event, $chunk, $primaryKey);
                 Mage::helper('responsys')->log('Triggered custom event `' . $event . '` for ' . count($chunk) . ' records.');
+                Mage::helper('responsys')->log(print_r($chunk, true));
 
                 // Check for errors.
                 if(!empty($response->errorMessage)) {
