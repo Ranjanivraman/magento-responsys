@@ -100,7 +100,7 @@ class Pas_Responsys_Model_Observer
         $attribute = $observer->getImportAttribute();
         Mage::getResourceModel('responsys/customer_collection')
             ->sync($attribute, false)
-            ->event('instore_welcome', $attribute);
+            ->event('welcome_instore', $attribute);
 
         return $this;
     }

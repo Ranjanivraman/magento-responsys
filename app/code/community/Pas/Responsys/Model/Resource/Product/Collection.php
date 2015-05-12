@@ -57,12 +57,12 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
     public function load($printQuery = false, $logQuery = false)
     {
         $columns    = Mage::helper('responsys/product')->getMagentoColumns();
-        $primaryKey = Mage::helper('responsys/product')->getMagentoKey();
+        $magentoKey = Mage::helper('responsys/product')->getMagentoKey();
         $enabled    = Mage_Catalog_Model_Product_Status::STATUS_ENABLED;
         $visible    = Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE;
 
         $this->addAttributeToSelect($columns)
-            ->addAttributeToFilter($primaryKey, array('notnull' => true))
+            ->addAttributeToFilter($magentoKey, array('notnull' => true))
             ->addAttributeToFilter('status', array('eq' => $enabled))
             ->addAttributeToFilter('visibility', array('neq' => $visible));
 
@@ -98,7 +98,9 @@ class Pas_Responsys_Model_Resource_Product_Collection extends Mage_Catalog_Model
                 ->addNameToResult()
                 ->addAttributeToSelect(array('level', 'children_count'))
                 ->addIdFilter($product->getCategoryIds())
+                // Get lowest level category.
                 ->addOrderField('level')
+                // If multiple on same level get one with most children.
                 ->addOrderField('children_count');
 
             $category = $categoryCollection->getLastItem();

@@ -321,7 +321,7 @@ class Responsys_API
      *
      * @TODO: deal with larger than 200 situation.
      */
-    public function mergeTableRecords($folder, $table, $records, $match_columns = array('PRODUCT_ID'))
+    public function mergeTableRecords($folder, $table, $records, $match_columns = array('PRIMARY_ID'))
     {
         $args = new stdClass();
         $args->table = new stdClass();
@@ -358,6 +358,7 @@ class Responsys_API
      *   (optional) The type of the ids, either:
      *    - 'EMAIL_ADDRESS' (default)
      *    - 'RIID'
+     *    - 'CUSTOMER_ID
      *
      * @return array
      * @throws ResponsysException
@@ -377,7 +378,9 @@ class Responsys_API
                 case 'RIID':
                     $recipient->recipientId = $id;
                     break;
-
+                case 'CUSTOMER_ID':
+                    $recipient->customerId = $id;
+                    break;
                 case 'EMAIL_ADDRESS':
                     $recipient->emailAddress = $id;
             }
@@ -413,21 +416,37 @@ class Responsys_API
      *   The list which all recipients are a member of.
      * @param string $event_name
      *   The name of the event being triggered.
-     * @param array $emails
-     *   Recipient emails addresses found in the given folder / list.
+     * @param array $ids
+     *   An array of receipient identifiers. The type
+     *   of the ID is defined by the id_type parameter
+     *   below.
+     * @param string $id_type
+     *   (optional) The type of the ids, either:
+     *    - 'EMAIL_ADDRESS' (default)
+     *    - 'RIID'
+     *    - 'CUSTOMER_ID
      *
      * @return array
      * @throws ResponsysException
      */
-    public function triggerCustomEvent($folder, $list, $event_name, $emails)
+    public function triggerCustomEvent($folder, $list, $event_name, $ids, $id_type = 'EMAIL_ADDRESS')
     {
         $recipients = array();
-        foreach ($emails as $email) {
+        foreach ($ids as $id) {
             $recipient = new stdClass();
             $recipient->listName = new stdClass();
             $recipient->listName->folderName = $folder;
             $recipient->listName->objectName = $list;
-            $recipient->emailAddress = $email;
+            switch ($id_type) {
+                case 'RIID':
+                    $recipient->recipientId = $id;
+                    break;
+                case 'CUSTOMER_ID':
+                    $recipient->customerId = $id;
+                    break;
+                case 'EMAIL_ADDRESS':
+                    $recipient->emailAddress = $id;
+            }
 
             $recipient_data = new stdClass();
             $recipient_data->recipient = $recipient;
