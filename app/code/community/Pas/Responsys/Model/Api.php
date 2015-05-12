@@ -26,8 +26,13 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         try {
             // Todo: Turn this into a less memory hungry loop.
             foreach(array_chunk($records, self::MERGE_LIMIT) as $chunk) {
-                $this->_client->mergeListMembers($folder, $list, $chunk);
-                Mage::helper('responsys')->log('Merged member list data for ' . count($chunk) . ' records.');
+                $response = $this->_client->mergeListMembers($folder, $list, $chunk);
+                Mage::helper('responsys')->log('Merged list members for ' . count($chunk) . ' records.');
+
+                // Check for errors.
+                if(!empty($response->errorMessage)) {
+                    Mage::throwException('ListFault: ' . $response->errorMessage);
+                }
             }
         }
         catch (Exception $e) {
@@ -46,8 +51,13 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         try {
             // Todo: Turn this into a less memory hungry loop.
             foreach(array_chunk($records, self::MERGE_LIMIT) as $chunk) {
-                $this->_client->mergeIntoProfileExtension($folder, $extension, $chunk);
-                Mage::helper('responsys')->log('Merged profile extension data for ' . count($chunk) . ' records.');
+                $response = $this->_client->mergeIntoProfileExtension($folder, $extension, $chunk);
+                Mage::helper('responsys')->log('Merged into profile extension for ' . count($chunk) . ' records.');
+
+                // Check for errors.
+                if(!empty($response->errorMessage)) {
+                    Mage::throwException('ListExtensionFault: ' . $response->errorMessage);
+                }
             }
         }
         catch (Exception $e) {
@@ -58,7 +68,7 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    public function mergeTable($folder, $table, array $records)
+    public function mergeTable($folder, $table, array $records, $primaryKey = 'PRODUCT_ID')
     {
         // Don't execute API call if nothing to send.
         if(!count($records)) return $this;
@@ -66,8 +76,13 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         try {
             // Todo: Turn this into a less memory hungry loop.
             foreach(array_chunk($records, self::MERGE_LIMIT) as $chunk) {
-                $this->_client->mergeTableRecords($folder, $table, $chunk);
-                Mage::helper('responsys')->log('Merged table data for ' . count($chunk) . ' records.');
+                $response = $this->_client->mergeTableRecords($folder, $table, $chunk, array($primaryKey));
+                Mage::helper('responsys')->log('Merged table records for ' . count($chunk) . ' records.');
+
+                // Check for errors.
+                if(!empty($response->errorMessage)) {
+                    Mage::throwException('TableFault: ' . $response->errorMessage);
+                }
             }
         }
         catch (Exception $e) {
@@ -78,7 +93,7 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    public function triggerEvent($folder, $list, $event, array $records)
+    public function triggerEvent($folder, $list, $event, array $records, $primaryKey = 'CUSTOMER_ID')
     {
         // Don't execute API call if nothing to send.
         if(!count($records)) return $this;
@@ -86,8 +101,14 @@ class Pas_Responsys_Model_Api extends Mage_Core_Model_Abstract
         try {
             // Todo: Turn this into a less memory hungry loop.
             foreach(array_chunk($records, self::EVENT_LIMIT) as $chunk) {
-                $this->_client->triggerCustomEvent($folder, $list, $event, $chunk);
-                Mage::helper('responsys')->log('Triggered event `' . $event . '` for ' . count($chunk) . ' records.');
+                $response = $this->_client->triggerCustomEvent($folder, $list, $event, $chunk, $primaryKey);
+                Mage::helper('responsys')->log('Triggered custom event `' . $event . '` for ' . count($chunk) . ' records.');
+
+                // Check for errors.
+                if(!empty($response->errorMessage)) {
+                    Mage::throwException('CustomEvent: ' . $response->errorMessage);
+                }
+
             }
         }
         catch (Exception $e) {

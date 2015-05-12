@@ -32,7 +32,7 @@ class Mage_Shell_Responsys extends Mage_Shell_Abstract
             }
         }
         catch (Exception $e) {
-            echo "There was an error: {$e->getMessage()}\n";
+            echo $e->getMessage() . "\n";
         }
     }
 

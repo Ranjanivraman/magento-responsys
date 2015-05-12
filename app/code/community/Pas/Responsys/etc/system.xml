@@ -144,21 +144,21 @@
                             <show_in_store>0</show_in_store>
                         </list_welcome>
                         <name_welcome translate="label">
-                            <label>Welcome</label>
+                            <label>Welcome Name</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </name_welcome>
-                        <name_instore_welcome translate="label">
-                            <label>Welcome In Store</label>
+                        <name_welcome_instore translate="label">
+                            <label>Welcome In Store Name</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </name_instore_welcome>
+                        </name_welcome_instore>
                     </fields>
                 </events>
             </groups>

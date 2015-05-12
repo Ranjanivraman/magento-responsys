@@ -54,18 +54,19 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
 
     public function event($event, $filter = null, $resetFlag = true)
     {
-        $filter = $filter ? $filter : Mage::helper('responsys/customer')->getWelcomeAttribute();
-        $folder = Mage::helper('responsys/customer')->getEventListFolder($event);
-        $list   = Mage::helper('responsys/customer')->getEventList($event);
-        $event  = Mage::helper('responsys/customer')->getEventName($event);
+        $filter     = $filter ? $filter : Mage::helper('responsys/customer')->getWelcomeAttribute();
+        $folder     = Mage::helper('responsys/customer')->getEventListFolder();
+        $list       = Mage::helper('responsys/customer')->getEventList();
+        $event      = Mage::helper('responsys/customer')->getEventName($event);
+        $magentoKey = Mage::helper('responsys/customer')->getMagentoKey();
 
         $this->_setFilter($filter)->load();
 
         // Collect all required customer data.
         $records = array();
         foreach($this as $key => $customer) {
-            if ($customer->hasEmail()) {
-                $records[$key] = $customer->getEmail();
+            if ($customer->hasData($magentoKey)) {
+                $records[$key] = $customer->getData($magentoKey);
             }
         }
 
@@ -82,10 +83,10 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
     public function load($printQuery = false, $logQuery = false)
     {
         $columns    = Mage::helper('responsys/customer')->getMagentoColumns();
-        $primaryKey = Mage::helper('responsys/customer')->getMagentoKey();
+        $magentoKey = Mage::helper('responsys/customer')->getMagentoKey();
 
         $this->addAttributeToSelect($columns)
-            ->addAttributeToFilter($primaryKey, array('notnull' => true));
+            ->addAttributeToFilter($magentoKey, array('notnull' => true));
 
         // Sync filter
         if($filter = $this->_getFilter()) {
@@ -139,10 +140,12 @@ class Pas_Responsys_Model_Resource_Customer_Collection extends Mage_Customer_Mod
 
         $records = array();
         foreach($this as $key => $customer) {
-            $records[$key] = array(
-                $responsysKey => $customer->getData($magentoKey),
-                'RESET_URL' => $this->_getCustomerActivationLink($customer)
-            );
+            if ($customer->hasData($magentoKey)) {
+                $records[$key] = array(
+                    $responsysKey => $customer->getData($magentoKey),
+                    'RESET_URL' => $this->_getCustomerActivationLink($customer)
+                );
+            }
         }
 
         Mage::getModel('responsys/api')->mergeExtension($folder, $extension, $records);
